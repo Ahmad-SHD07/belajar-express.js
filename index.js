@@ -62,12 +62,21 @@ const cekToken = (req, res, next) => {
 
     jwt.verify(tokenAsli, KUNCI_RAHASIA, (err, decoded) => {
         if (err) {
-            return res.status(401),json ({
+            return res.status(401).json ({
                 pesan: 'Tiket palsu atau sudah kedaluwarsa!'
             })
         }
+        req.user = decoded;
+        next();
     });
-}
+};
+
+app.post('/tambah-menu-rahasia', cekToken, (req, res) => {
+    res.json({
+        pesan: `Selamat datang Kasir ${req.user.username}! Akses rahasia diberikan.`,
+        menu_baru: req.body.nama_menu
+    });
+});
 
 app.get('/', (req, res) => {
     res.send('Selamat datang di Restoran Express pertamaku!!');
